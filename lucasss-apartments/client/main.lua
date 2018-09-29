@@ -1019,7 +1019,7 @@ function OpenApartmentMenu(apartment, owned)
 										end, nil, nil, nil, true)
 									end
 								else
-									ESX.ShowNotification('You do not have enough money. (~r~$' .. data.current.cost .. '~w~)')
+									ESX.ShowNotification('You do not have enough money. (~r~$' .. values.price .. '~w~)')
 								end
 							end, values.price)
 						end
