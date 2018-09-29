@@ -40,3 +40,11 @@ CREATE TABLE IF NOT EXISTS `jail` (
   `jail_purchased` int(11) DEFAULT NULL,
   PRIMARY KEY (`identifier`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+CREATE TABLE IF NOT EXISTS `user_vehicles` (
+  `identifier` text COLLATE utf8mb4_bin,
+  `plate` text COLLATE utf8mb4_bin,
+  `model` text COLLATE utf8mb4_bin,
+  `properties` text COLLATE utf8mb4_bin,
+  `impounded` tinyint(1) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
