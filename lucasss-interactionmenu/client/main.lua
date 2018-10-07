@@ -240,7 +240,7 @@ function OpenBodySearchMenu(player)
     end
 
     table.insert(elements, {
-      label          = _U('confiscate_dirty') .. blackMoney,
+      label          = "Confiscate Dirty Money: $" .. blackMoney,
       value          = 'black_money',
       itemType       = 'item_account',
       amount         = blackMoney
@@ -250,19 +250,19 @@ function OpenBodySearchMenu(player)
 
     for i=1, #data.weapons, 1 do
       table.insert(elements, {
-        label          = _U('confiscate') .. ESX.GetWeaponLabel(data.weapons[i].name),
+        label          = "Confiscate " .. ESX.GetWeaponLabel(data.weapons[i].name),
         value          = data.weapons[i].name,
         itemType       = 'item_weapon',
         amount         = data.weapons[i].ammo,
       })
     end
 
-    table.insert(elements, {label = _U('inventory_label'), value = nil})
+    table.insert(elements, {label = "--- Ryggsäck ---", value = nil})
 
     for i=1, #data.inventory, 1 do
       if data.inventory[i].count > 0 then
         table.insert(elements, {
-          label          = _U('confiscate_inv') .. data.inventory[i].count .. ' ' .. data.inventory[i].label,
+          label          = "Confiscate x" .. data.inventory[i].count .. ' ' .. data.inventory[i].label,
           value          = data.inventory[i].name,
           itemType       = 'item_standard',
           amount         = data.inventory[i].count,
@@ -281,7 +281,7 @@ function OpenBodySearchMenu(player)
     ESX.UI.Menu.Open(
       'default', GetCurrentResourceName(), 'body_search',
       {
-        title    = _U('search'),
+        title    = "Sök igenom",
         align    = 'top-left',
         elements = elements,
       },
