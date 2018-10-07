@@ -150,11 +150,13 @@ function OpenCitizenInteraction()
 			if data.current.value == 'accessories' then
 				TriggerEvent('esx_accessories:openMenu')
 			elseif data.current.value == 'search' then
-				local player, distance = ESX.Game.GetClosestPlayer()
+				local target = GetNearestPlayer()
 
-				if distance ~= -1 and distance <= 3.0 then
-					OpenBodySearchMenu(player)
-				end
+				if target ~= nil then
+					OpenBodySearchMenu(target)
+				else
+					TriggerEvent('esx:showNotification', 'No ~r~players ~w~nearby.')
+				end	
 			elseif data.current.value == 'handcuff' then
 				local target = GetNearestPlayer()
 
@@ -304,7 +306,6 @@ function OpenBodySearchMenu(player)
     )
 
   end, GetPlayerServerId(player))
-
 end
 
 function OpenVehicleInteraction()
