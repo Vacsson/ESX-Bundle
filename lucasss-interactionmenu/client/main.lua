@@ -149,7 +149,7 @@ function OpenCitizenInteraction()
 
 			if data.current.value == 'accessories' then
 				TriggerEvent('esx_accessories:openMenu')
-			if data.current.value == 'search' then
+			elseif data.current.value == 'search' then
 				local player, distance = ESX.Game.GetClosestPlayer()
 
 				if distance ~= -1 and distance <= 3.0 then
