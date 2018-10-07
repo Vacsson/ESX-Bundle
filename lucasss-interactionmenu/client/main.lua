@@ -135,7 +135,7 @@ function OpenCitizenInteraction()
 			title = 'Citizen Menu',
 			align = 'top-left',
 			elements = {
-				--{label = 'Search', value = 'search'},
+				{label = 'Search', value = 'search'},
 				{label = 'ID menu', value = 'id_card_menu'},
 				{label = 'Handcuff', value = 'handcuff'},
 				{label = 'Blindfold', value = 'blindfold'},
@@ -149,6 +149,12 @@ function OpenCitizenInteraction()
 
 			if data.current.value == 'accessories' then
 				TriggerEvent('esx_accessories:openMenu')
+			if data.current.value == 'search' then
+				local player, distance = ESX.Game.GetClosestPlayer()
+
+				if distance ~= -1 and distance <= 3.0 then
+					OpenBodySearchMenu(player)
+				end
 			elseif data.current.value == 'handcuff' then
 				local target = GetNearestPlayer()
 
@@ -161,12 +167,12 @@ function OpenCitizenInteraction()
 				local player, distance = ESX.Game.GetClosestPlayer()
 
 				if distance ~= -1 and distance <= 3.0 then
-	   			ESX.TriggerServerCallback('jsfour-blindfold:itemCheck', function( hasItem )
-	      		TriggerServerEvent('jsfour-blindfold', GetPlayerServerId(player), hasItem)
-	   		end)
-			else
-	   			ESX.ShowNotification('No ~r~players ~w~nearby.')
-			end
+					ESX.TriggerServerCallback('jsfour-blindfold:itemCheck', function( hasItem )
+						TriggerServerEvent('jsfour-blindfold', GetPlayerServerId(player), hasItem)
+					end)
+				else
+					ESX.ShowNotification('No ~r~players ~w~nearby.')
+				end
 			elseif data.current.value == 'uncuff' then
 				local target = GetNearestPlayer()
 
@@ -216,6 +222,89 @@ function OpenCitizenInteraction()
 			menu.close()
 		end
 	)
+end
+function OpenBodySearchMenu(player)
+
+  ESX.TriggerServerCallback('esx_policejob:getOtherPlayerData', function(data)
+
+    local elements = {}
+
+    local blackMoney = 0
+
+    for i=1, #data.accounts, 1 do
+      if data.accounts[i].name == 'black_money' then
+        blackMoney = data.accounts[i].money
+      end
+    end
+
+    table.insert(elements, {
+      label          = _U('confiscate_dirty') .. blackMoney,
+      value          = 'black_money',
+      itemType       = 'item_account',
+      amount         = blackMoney
+    })
+
+    table.insert(elements, {label = '--- Vapen ---', value = nil})
+
+    for i=1, #data.weapons, 1 do
+      table.insert(elements, {
+        label          = _U('confiscate') .. ESX.GetWeaponLabel(data.weapons[i].name),
+        value          = data.weapons[i].name,
+        itemType       = 'item_weapon',
+        amount         = data.weapons[i].ammo,
+      })
+    end
+
+    table.insert(elements, {label = _U('inventory_label'), value = nil})
+
+    for i=1, #data.inventory, 1 do
+      if data.inventory[i].count > 0 then
+        table.insert(elements, {
+          label          = _U('confiscate_inv') .. data.inventory[i].count .. ' ' .. data.inventory[i].label,
+          value          = data.inventory[i].name,
+          itemType       = 'item_standard',
+          amount         = data.inventory[i].count,
+        })
+      end
+    end
+
+	RequestAnimDict('mini@repair')
+
+	while not HasAnimDictLoaded('mini@repair') do
+		Citizen.Wait(1)
+	end
+
+	TaskPlayAnim(GetPlayerPed(-1), 'mini@repair', 'fixing_a_ped', 1.0, -1.0, 1.0, 0, 0, 0, 0, 0)
+
+    ESX.UI.Menu.Open(
+      'default', GetCurrentResourceName(), 'body_search',
+      {
+        title    = _U('search'),
+        align    = 'top-left',
+        elements = elements,
+      },
+      function(data, menu)
+
+        local itemType = data.current.itemType
+        local itemName = data.current.value
+        local amount   = data.current.amount
+
+        if data.current.value ~= nil then
+
+          TriggerServerEvent('esx_policejob:confiscatePlayerItem', GetPlayerServerId(player), itemType, itemName, amount)
+
+          OpenBodySearchMenu(player)
+
+        end
+
+      end,
+      function(data, menu)
+        menu.close()
+      end
+    )
+
+  end, GetPlayerServerId(player))
+
 end
 
 function OpenVehicleInteraction()
